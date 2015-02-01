@@ -1,4 +1,7 @@
 require 'pry'
+=begin
+TODO: 
+=end	
 
 # Function to ask for dice number
 def dice_num
@@ -25,75 +28,86 @@ def turn
 	
 	while roll > 0
 		dice_holder.push roll_die
-		if roll_die == 1
-			puts "Sorry! You rolled a 1 and scored 0 points this turn."
-			return 0
-		end
 		roll -= 1
 	end
-
-	dice_holder.each do |x|
-		turn_total +=x
+	
+	if dice_holder.include?(1)
+		puts "Sorry! You rolled a 1 and scored 0 points this turn."
+		return 0
+	else
+		dice_holder.each do |x|
+			turn_total +=x
+		end
 	end
 
-	puts "Your score for this turn was #{turn_total}."	
+	puts "You rolled #{dice_holder} and your score for this turn was #{turn_total}."	
 	turn_total
+end
+
+# Function to set up the game
+def power_up player_name, player_scores
+	puts "How many players do you have?"
+	player_num = gets.chomp.to_i
+	
+	while player_num > 0
+		puts "\nPlease enter a player name:\n"
+		name = gets.chomp.downcase.capitalize
+		player_name.push name
+		player_scores.push 0 
+		player_num -= 1
+	end
+end	
+
+# Function to check if there is a winner after each turn
+def check_winner player_scores, winner
+	game_over = false
+	(0...player_scores.length).each do |x|
+    if player_scores[x] >= 20
+      return true
+		end
+  end
+  game_over
+  
 end
 
 # Loops the code through to the bottom to check if they want to play again
 loop do
 
-	player1_total = 0
-	player2_total = 0
+	player_name = []
+	player_scores = []
+  winner = []
 
-# puts " ____________________________________________________\n
-# |  Welcome to Dice Hog! The goal is to be the first  |\n
-# |  player to score 100 points. You can choose how    |\n
-# |  many 6-sided dice you would like to roll, but be  |\n
-# |  careful. If any of the dice you roll are 1s, you  |\n
-# |  score 0 points and it is the next player's turn.  |\n
-# |                     Good luck!                     |\n 
-# |____________________________________________________|\n"
-# puts
-
-	puts "Player one, what's your name?"
-	player1_name = gets.chomp
-	puts
-	puts "And Player two, what's your name?"
-	player2_name = gets.chomp
-	puts
+puts %{ ____________________________________________________
+| Welcome to Dice Hog! The goal is to be the first   |
+| player to score 100 points. You can choose how     |
+| many 6-sided dice you would like to roll, but be   |
+| careful. If any of the dice you roll are 1s, you   |
+| score 0 points and it is the next player's turn.   |
+|                    Good luck!                      |
+|____________________________________________________|\n\n}
 	
+power_up(player_name, player_scores)
 
-# Loop handles scoring and resets/ends the game
-	while player1_total < 20 && player2_total < 20
-		puts "#{player1_name}, you currently have #{player1_total} points."
-		player1_total += turn
-		puts "You now have #{player1_total} points."
-		sleep (1.5)
-		puts 
-		puts "_____________________________________________________" 
-		puts 
-		puts
+		loop do  
+			(0...player_scores.length).each do |x|
+				puts "\n#{player_name[x]}, you currently have #{player_scores[x]} points."
+				player_scores[x] += turn
+				puts "You now have #{player_scores[x]} points."
+				sleep (1.5)
+				puts "\n_____________________________________________________\n\n" 
+			end
+			if check_winner(player_scores,winner) == true
+				break
+			end
+		end
 
-		puts "#{player2_name}, you currently have #{player2_total} points."
-		player2_total += turn
-		puts "You now have #{player2_total} points."
-		sleep (1.5)
-		puts 
-		puts "_____________________________________________________" 
-		puts 
-		puts
-	end
-
-	if player1_total > player2_total
-		puts "Congrats #{player1_name}, you win!"
-	else
-		puts "Congrats #{player2_name}, you win!"
-	end
+  puts %{GAME OVER}
+  puts "\n\nFinal Scoreboard:\n"
+  (0...player_scores.length).each do |x|
+  	puts "#{player_name[x]}: #{player_scores[x]}"
+  end
 	
-	puts
-	puts
-	puts "Would you like to play again?(y/n)"
+	puts "\n\nWould you like to play again?(y/n)"
 	again = gets.chomp
 	break if again != "y"
 end
