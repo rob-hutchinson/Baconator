@@ -78,7 +78,7 @@ end
 def check_winner player_scores
   game_over = false
   (0...player_scores.length).each do |x|
-    if player_scores[x] >= 10
+    if player_scores[x] >= 100
       return true
     end
   end
